@@ -1,13 +1,20 @@
 package co.edu.uco.noteserviceapi;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.context.ApplicationContext;
+import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class NoteServiceApiApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+    @Autowired
+    private ApplicationContext applicationContext;
 
+    @Test
+    @DisplayName("Should successfully load the Spring application context without errors")
+    void shouldSuccessfullyLoadTheSpringApplicationContextWithoutErrors() {
+        assertThat(applicationContext).isNotNull();
+    }
 }
