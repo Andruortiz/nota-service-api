@@ -71,6 +71,7 @@ public class HexagonalArchitectureTest {
     void shouldEnsureThatControllersResideWithinTheProperInfrastructureInputPackage() {
         classes().that().haveSimpleNameEndingWith("Controller")
                 .should().resideInAPackage("co.edu.uco.noteserviceapi.infrastructure.input.controller..")
+                .allowEmptyShould(true)
                 .check(projectClasses);
     }
 

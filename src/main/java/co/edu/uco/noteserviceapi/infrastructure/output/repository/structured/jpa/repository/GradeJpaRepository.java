@@ -8,4 +8,3 @@ import java.util.UUID;
 
 public interface GradeJpaRepository extends JpaRepository<GradeJpaEntity, UUID>, JpaSpecificationExecutor<GradeJpaEntity> {
 }
-
