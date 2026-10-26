@@ -67,6 +67,11 @@ public enum MessageCatalog {
             "Grade contains more decimal places than allowed."
     ),
 
+    INVALID_REQUEST(
+            "La solicitud no es válida.",
+            "Request validation failed."
+    ),
+
     UNEXPECTED_ERROR(
             "Se presentó un error inesperado.",
             "Unhandled exception occurred."
