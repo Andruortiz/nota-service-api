@@ -1,12 +1,17 @@
 package co.edu.uco.noteserviceapi.services.input.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class RegisterStudentGradeRequest {
 
+    @NotNull
     private UUID teacherId;
+    @NotNull
     private UUID studentId;
+    @NotNull
     private UUID gradeId;
     private BigDecimal score;
 
