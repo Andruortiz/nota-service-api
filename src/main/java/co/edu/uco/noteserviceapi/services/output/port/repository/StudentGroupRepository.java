@@ -1,8 +1,13 @@
 package co.edu.uco.noteserviceapi.services.output.port.repository;
 
-import co.edu.uco.noteserviceapi.services.output.port.repository.entity.StudentGroupEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentGroupEntity;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public interface StudentGroupRepository extends CrudRepository<UUID, StudentGroupEntity> {
+public interface StudentGroupRepository extends BaseRepository<UUID, StudentGroupEntity> {
+
+    Optional<StudentGroupEntity> findByStudentIdAndGroupId(UUID studentId, UUID groupId);
+
+
 }

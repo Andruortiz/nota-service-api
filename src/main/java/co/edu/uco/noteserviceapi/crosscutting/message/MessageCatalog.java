@@ -58,7 +58,7 @@ public enum MessageCatalog {
     ),
 
     GRADE_VALUE_OUT_OF_RANGE(
-            "La calificación debe estar entre 1.00 y 5.00.",
+            "La calificación debe estar entre 0.00 y 5.00.",
             "Grade value is outside allowed range."
     ),
 

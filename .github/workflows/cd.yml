@@ -20,11 +20,13 @@ jobs:
   validate:
     name: Validate release tag
     runs-on: ubuntu-latest
+
     outputs:
       version: ${{ steps.data.outputs.version }}
       image_tag: ${{ steps.data.outputs.image_tag }}
       environment: ${{ steps.data.outputs.environment }}
       prerelease: ${{ steps.data.outputs.prerelease }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,13 +37,14 @@ jobs:
         shell: bash
         run: |
           TAG="${GITHUB_REF_NAME}"
+
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
-            echo "::error::Tag '$TAG' does not follow SemVer pattern (expected vX.Y.Z or vX.Y.Z-rc.N)"
+            echo "::error::Tag '$TAG' does not follow SemVer pattern"
             exit 1
           fi
 
-          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
-            echo "::error::Tag commit does not belong to main branch. Production deployments are restricted to merged code."
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+            echo "::error::Tag commit does not belong to master branch."
             exit 1
           fi
 
@@ -70,20 +73,26 @@ jobs:
     name: Build and publish container image
     needs: [validate, ci]
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
     outputs:
       reference: ${{ steps.name.outputs.reference }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 27
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: "27"
-          cache: "maven"
+          cache: maven
+
+      - name: Grant execute permission to Maven Wrapper
+        run: chmod +x mvnw
 
       - name: Package Application JAR
         run: ./mvnw package -DskipTests
@@ -104,7 +113,7 @@ jobs:
             -t "${{ steps.name.outputs.reference }}" .
 
       - name: Scan container for vulnerabilities (Trivy)
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:
           image-ref: ${{ steps.name.outputs.reference }}
           severity: CRITICAL
@@ -125,21 +134,24 @@ jobs:
     name: Automatic deployment to ${{ needs.validate.outputs.environment }}
     needs: [validate, image]
     runs-on: ubuntu-latest
+
     environment:
       name: ${{ needs.validate.outputs.environment }}
+
     steps:
       - name: Execute automated infrastructure deployment
         run: |
           echo "Deploying target version ${{ needs.validate.outputs.version }} to ${{ needs.validate.outputs.environment }}"
           echo "Pulling latest image: ${{ needs.image.outputs.reference }}"
-          # TODO: Inserta aquí el comando de tu proveedor cloud (ej. kubectl set image, aws ecs, webhook, etc.)
 
   release:
     name: Publish GitHub release
     needs: [validate, deploy]
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -149,7 +161,9 @@ jobs:
         shell: bash
         run: |
           ARGS=(--generate-notes --title "$GITHUB_REF_NAME" --verify-tag)
+
           if [[ "${{ needs.validate.outputs.prerelease }}" == "true" ]]; then
             ARGS+=(--prerelease)
           fi
+
           gh release create "$GITHUB_REF_NAME" "${ARGS[@]}"
