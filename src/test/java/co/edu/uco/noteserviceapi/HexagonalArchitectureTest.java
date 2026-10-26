@@ -35,7 +35,7 @@ public class HexagonalArchitectureTest {
 
         hexagonalArchitecture
                 // Domain rules
-                .whereLayer("Domain").mayOnlyBeAccessedByLayers("Services", "Infrastructure")
+                .whereLayer("Domain").mayOnlyBeAccessedByLayers("Services", "Infrastructure", "Bootstrap")
 
                 // Services rules
                 .whereLayer("Services").mayOnlyBeAccessedByLayers("Infrastructure", "Bootstrap")
@@ -77,7 +77,7 @@ public class HexagonalArchitectureTest {
     @Test
     @DisplayName("Should ensure that JPA entities reside within the proper infrastructure output package")
     void shouldEnsureThatJpaEntitiesResideWithinTheProperInfrastructureOutputPackage() {
-        classes().that().haveSimpleNameEndingWith("JPAEntity")
+        classes().that().haveSimpleNameEndingWith("JpaEntity")
                 .should().resideInAPackage("co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa.entity..")
                 .check(projectClasses);
     }

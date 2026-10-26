@@ -2,12 +2,13 @@ package co.edu.uco.noteserviceapi.crosscutting.config;
 
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Conf
+@Configuration
 public class ClockConfiguration {
 
     @Bean
-    public Clock reloj() {
+    public Clock clock() {
         return Clock.systemUTC();
     }
 }

@@ -1,8 +1,19 @@
 package co.edu.uco.noteserviceapi.services.usecase;
 
 import java.time.Clock;
+import java.time.Instant;
 
+import co.edu.uco.noteserviceapi.crosscutting.exception.ConflictException;
+import co.edu.uco.noteserviceapi.crosscutting.exception.ResourceNotFoundException;
+import co.edu.uco.noteserviceapi.crosscutting.message.MessageCatalog;
+import co.edu.uco.noteserviceapi.crosscutting.util.helper.UuidHelper;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.*;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.GradeEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.GroupEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentGradeEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentGroupEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.TeacherEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +84,46 @@ public class RegisterStudentGradeUseCase
     public RegisterStudentGradeResponse execute(
             final RegisterStudentGradeRequest request) {
 
-        throw new UnsupportedOperationException(
-                "RegisterStudentGradeUseCase not implemented yet");
+        final int value = studentGradeDomain.validateAndConvert(request.getScore());
+
+        final TeacherEntity teacher = teacherRepository.findById(request.getTeacherId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageCatalog.TEACHER_NOT_FOUND.name()));
+        teacherDomain.validateActive(teacher);
+
+        final GradeEntity grade = gradeRepository.findById(request.getGradeId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageCatalog.GRADE_NOT_FOUND.name()));
+        gradeDomain.validateRegistrationPeriod(grade, Instant.now(clock));
+
+        final GroupEntity group = grade.getGroup();
+        groupDomain.validateActive(group);
+        groupDomain.validateAssignedTeacher(group, teacher.getId());
+
+        final StudentEntity student = studentRepository.findById(request.getStudentId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageCatalog.STUDENT_NOT_FOUND.name()));
+        studentDomain.validateActive(student);
+
+        final StudentGroupEntity studentGroup = studentGroupRepository
+                .findByStudentIdAndGroupId(student.getId(), group.getId())
+                .orElse(null);
+        studentGroupDomain.validateEnrollment(studentGroup);
+
+        if (studentGradeRepository.existsByGradeIdAndStudentGroupId(
+                grade.getId(), studentGroup.getId())) {
+            throw new ConflictException(
+                    MessageCatalog.STUDENT_GRADE_ALREADY_REGISTERED.name());
+        }
+
+        final StudentGradeEntity studentGrade = new StudentGradeEntity();
+        studentGrade.setId(UuidHelper.generate());
+        studentGrade.setGrade(grade);
+        studentGrade.setStudentGroup(studentGroup);
+        studentGrade.setValue(value);
+
+        studentGradeRepository.create(studentGrade);
+
+        return new RegisterStudentGradeResponse(studentGrade.getId());
     }
 }

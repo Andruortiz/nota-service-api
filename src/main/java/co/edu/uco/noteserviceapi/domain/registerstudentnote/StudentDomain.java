@@ -2,7 +2,7 @@ package co.edu.uco.noteserviceapi.domain.registerstudentnote;
 
 import co.edu.uco.noteserviceapi.crosscutting.exception.BusinessRuleException;
 import co.edu.uco.noteserviceapi.crosscutting.message.MessageCatalog;
-import co.edu.uco.noteserviceapi.services.output.port.repository.entity.StudentEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentEntity;
 
 public class StudentDomain {
 

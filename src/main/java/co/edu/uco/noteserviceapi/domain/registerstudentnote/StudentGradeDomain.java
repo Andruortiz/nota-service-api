@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class StudentGradeDomain {
 
     private static final BigDecimal MIN_GRADE =
-            BigDecimal.ONE;
+            BigDecimal.ZERO;
 
     private static final BigDecimal MAX_GRADE =
             BigDecimal.valueOf(5);
