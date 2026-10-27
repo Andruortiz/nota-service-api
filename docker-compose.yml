@@ -27,6 +27,36 @@ services:
       - keycloak-data:/opt/keycloak/data
       - ./keycloak:/opt/keycloak/data/import:ro
 
+  vault:
+    image: hashicorp/vault:1.18
+    command: server -dev
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN:-dev-root-token}
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "8200:8200"
+
+  vault-init:
+    image: hashicorp/vault:1.18
+    depends_on:
+      - vault
+    restart: "no"
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: ${VAULT_TOKEN:-dev-root-token}
+      BD_USUARIO: ${BD_USUARIO:-notes}
+      BD_CLAVE: ${BD_CLAVE:-notes}
+    entrypoint:
+      - sh
+      - -c
+      - >-
+        until vault status > /dev/null 2>&1; do sleep 1; done;
+        vault kv put secret/note-service-api
+        spring.datasource.username="$$BD_USUARIO"
+        spring.datasource.password="$$BD_CLAVE"
+
 volumes:
   postgres-data:
   keycloak-data:
