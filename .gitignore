@@ -31,3 +31,5 @@ replay_pid*
 target/
 .env
 frontend-note-api/
+deploy/vault-init.txt
+deploy/frontend/
