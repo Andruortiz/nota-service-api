@@ -54,4 +54,11 @@ public class StudentGroupRepositoryAdapter implements StudentGroupRepository {
     public Optional<StudentGroupEntity> findByStudentIdAndGroupId(final UUID studentId, final UUID groupId) {
         return jpaRepository.findByStudentIdAndGroupId(studentId, groupId).map(mapper::toDomain);
     }
+
+    @Override
+    public List<StudentGroupEntity> findActiveByGroupId(final UUID groupId) {
+        return jpaRepository.findByGroupIdAndActiveTrue(groupId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

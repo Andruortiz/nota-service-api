@@ -54,4 +54,11 @@ public class StudentGradeRepositoryAdapter implements StudentGradeRepository {
     public boolean existsByGradeIdAndStudentGroupId(final UUID gradeId, final UUID studentGroupId) {
         return jpaRepository.existsByGradeIdAndStudentGroupId(gradeId, studentGroupId);
     }
+
+    @Override
+    public List<StudentGradeEntity> findByStudentGroupId(final UUID studentGroupId) {
+        return jpaRepository.findByStudentGroupId(studentGroupId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

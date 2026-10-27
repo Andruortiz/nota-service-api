@@ -11,7 +11,7 @@ public class RegisterStudentGradeRequest {
     @NotNull
     private UUID studentId;
     @NotNull
-    private UUID gradeId;
+    private UUID groupId;
     private BigDecimal score;
 
     public UUID getTeacherId() {
@@ -30,12 +30,12 @@ public class RegisterStudentGradeRequest {
         this.studentId = studentId;
     }
 
-    public UUID getGradeId() {
-        return gradeId;
+    public UUID getGroupId() {
+        return groupId;
     }
 
-    public void setGradeId(final UUID gradeId) {
-        this.gradeId = gradeId;
+    public void setGroupId(final UUID groupId) {
+        this.groupId = groupId;
     }
 
     public BigDecimal getScore() {
