@@ -1,0 +1,95 @@
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:?defina PUBLIC_HOST en .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frontend:/srv/frontend:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+      - keycloak
+
+  api:
+    image: ${API_IMAGE:-ghcr.io/andruortiz/nota-service-api:latest}
+    restart: unless-stopped
+    mem_limit: 640m
+    environment:
+      SPRING_PROFILES_ACTIVE: vault,prod
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60
+      BD_URL: jdbc:postgresql://postgres:5432/${BD_NOMBRE:-notes}
+      VAULT_URI: http://vault:8200
+      VAULT_AUTH: APPROLE
+      VAULT_ROLE_ID: ${VAULT_ROLE_ID:?defina VAULT_ROLE_ID en .env}
+      VAULT_SECRET_ID: ${VAULT_SECRET_ID:?defina VAULT_SECRET_ID en .env}
+      JWT_ISSUER_URI: https://${PUBLIC_HOST}/auth/realms/notes
+      JWT_JWK_SET_URI: http://keycloak:8080/auth/realms/notes/protocol/openid-connect/certs
+      APP_CORS_ALLOWED_ORIGINS: https://${PUBLIC_HOST}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+      vault:
+        condition: service_started
+
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${BD_NOMBRE:-notes}
+      POSTGRES_USER: ${BD_USUARIO:?defina BD_USUARIO en .env}
+      POSTGRES_PASSWORD: ${BD_CLAVE:?defina BD_CLAVE en .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-keycloak.sql:/docker-entrypoint-initdb.d/init-keycloak.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${BD_USUARIO} -d ${BD_NOMBRE:-notes}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    restart: unless-stopped
+    mem_limit: 1g
+    command: start --import-realm
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST}
+      KC_HOSTNAME: https://${PUBLIC_HOST}/auth
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: ${BD_USUARIO}
+      KC_DB_PASSWORD: ${BD_CLAVE}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:?defina KEYCLOAK_ADMIN en .env}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_CLAVE:?defina KEYCLOAK_ADMIN_CLAVE en .env}
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  vault:
+    image: hashicorp/vault:1.18
+    restart: unless-stopped
+    command: server
+    environment:
+      SKIP_SETCAP: "true"
+    volumes:
+      - ./vault/config.hcl:/vault/config/config.hcl:ro
+      - vault-data:/vault/file
+
+volumes:
+  postgres-data:
+  vault-data:
+  caddy-data:
+  caddy-config:

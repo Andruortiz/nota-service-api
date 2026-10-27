@@ -1,0 +1,15 @@
+{$PUBLIC_HOST} {
+    handle /api/* {
+        reverse_proxy api:8080
+    }
+
+    handle /auth/* {
+        reverse_proxy keycloak:8080
+    }
+
+    handle {
+        root * /srv/frontend
+        try_files {path} /index.html
+        file_server
+    }
+}
