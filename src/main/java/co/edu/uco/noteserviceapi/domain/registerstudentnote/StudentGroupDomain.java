@@ -13,6 +13,11 @@ public class StudentGroupDomain {
             throw new BusinessRuleException(
                     MessageCatalog.STUDENT_GROUP_NOT_FOUND.name());
         }
+
+        if (!studentGroup.isActive()) {
+            throw new BusinessRuleException(
+                    MessageCatalog.STUDENT_GROUP_INACTIVE.name());
+        }
     }
 
 }

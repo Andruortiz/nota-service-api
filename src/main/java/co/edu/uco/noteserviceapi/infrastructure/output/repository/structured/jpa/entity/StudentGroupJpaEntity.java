@@ -18,6 +18,17 @@ public class StudentGroupJpaEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private GroupJpaEntity group;
 
+    @Column(name = "active", nullable = false, columnDefinition = "boolean default true")
+    private boolean active;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public UUID getId() {
         return id;
     }

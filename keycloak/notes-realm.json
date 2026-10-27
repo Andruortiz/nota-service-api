@@ -1,0 +1,100 @@
+{
+  "realm": "notes",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "roles": {
+    "realm": [
+      { "name": "DOCENTE" },
+      { "name": "ESTUDIANTE" },
+      { "name": "ADMIN" }
+    ]
+  },
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"validations\":{\"length\":{\"min\":3,\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}},{\"name\":\"email\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}},{\"name\":\"firstName\",\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}},{\"name\":\"lastName\",\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}},{\"name\":\"teacherId\",\"permissions\":{\"view\":[\"admin\"],\"edit\":[\"admin\"]}}]}"
+          ]
+        }
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "note-service-api",
+      "bearerOnly": true,
+      "enabled": true
+    },
+    {
+      "clientId": "notes-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:5173/*", "http://localhost:5500/*"],
+      "webOrigins": ["http://localhost:5173", "http://localhost:5500"],
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "protocolMappers": [
+        {
+          "name": "audience-note-service-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "note-service-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        },
+        {
+          "name": "teacherId",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "teacherId",
+            "claim.name": "teacherId",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "docente",
+      "enabled": true,
+      "email": "docente@notes.local",
+      "emailVerified": true,
+      "firstName": "Docente",
+      "lastName": "Dev",
+      "attributes": { "teacherId": ["019a0000-0000-7000-8000-000000000001"] },
+      "credentials": [{ "type": "password", "value": "docente-dev", "temporary": false }],
+      "realmRoles": ["DOCENTE"]
+    },
+    {
+      "username": "estudiante",
+      "enabled": true,
+      "email": "estudiante@notes.local",
+      "emailVerified": true,
+      "firstName": "Estudiante",
+      "lastName": "Dev",
+      "credentials": [{ "type": "password", "value": "estudiante-dev", "temporary": false }],
+      "realmRoles": ["ESTUDIANTE"]
+    },
+    {
+      "username": "admin-notes",
+      "enabled": true,
+      "email": "admin@notes.local",
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Dev",
+      "credentials": [{ "type": "password", "value": "admin-dev", "temporary": false }],
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}
