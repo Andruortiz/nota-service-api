@@ -7,6 +7,15 @@ public class StudentGroupEntity {
     UUID id;
     StudentEntity student;
     GroupEntity group;
+    boolean active;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     public UUID getId() {
         return id;

@@ -7,7 +7,6 @@ import java.util.UUID;
 
 public class RegisterStudentGradeRequest {
 
-    @NotNull
     private UUID teacherId;
     @NotNull
     private UUID studentId;

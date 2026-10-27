@@ -52,6 +52,11 @@ public enum MessageCatalog {
             "Student is not enrolled in the group."
     ),
 
+    STUDENT_GROUP_INACTIVE(
+            "El estudiante se encuentra inactivo en el grupo.",
+            "Student is inactive in the group."
+    ),
+
     STUDENT_GRADE_ALREADY_REGISTERED(
             "La calificación ya fue registrada para el estudiante.",
             "Student already has a grade registered for this activity."
@@ -70,6 +75,11 @@ public enum MessageCatalog {
     INVALID_REQUEST(
             "La solicitud no es válida.",
             "Request validation failed."
+    ),
+
+    ACCESS_DENIED(
+            "No tiene permisos para realizar esta operación.",
+            "Access denied."
     ),
 
     UNEXPECTED_ERROR(

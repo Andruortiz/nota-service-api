@@ -44,6 +44,13 @@ public class GroupRepositoryAdapter implements GroupRepository {
     }
 
     @Override
+    public List<GroupEntity> findActiveByTeacherId(final UUID teacherId) {
+        return jpaRepository.findByTeacherIdAndActiveTrue(teacherId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<GroupEntity> findAll() {
         return jpaRepository.findAll().stream()
                 .map(mapper::toDomain)
