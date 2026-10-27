@@ -36,7 +36,9 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.POST, "/api/v1/notas-estudiante").hasRole(ROLE_TEACHER)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/grupos").hasRole(ROLE_TEACHER)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/grupos", "/api/v1/grupos/*/estudiantes",
+                                "/api/v1/grupos/*/estudiantes/*/notas")
+                        .hasRole(ROLE_TEACHER)
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(server -> server.jwt(jwt -> jwt.jwtAuthenticationConverter(converter())))
                 .build();

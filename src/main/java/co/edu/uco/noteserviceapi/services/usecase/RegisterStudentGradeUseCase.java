@@ -2,7 +2,9 @@ package co.edu.uco.noteserviceapi.services.usecase;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 
+import co.edu.uco.noteserviceapi.crosscutting.exception.BusinessRuleException;
 import co.edu.uco.noteserviceapi.crosscutting.exception.ConflictException;
 import co.edu.uco.noteserviceapi.crosscutting.exception.ResourceNotFoundException;
 import co.edu.uco.noteserviceapi.crosscutting.message.MessageCatalog;
@@ -91,12 +93,9 @@ public class RegisterStudentGradeUseCase
                         MessageCatalog.TEACHER_NOT_FOUND.name()));
         teacherDomain.validateActive(teacher);
 
-        final GradeEntity grade = gradeRepository.findById(request.getGradeId())
+        final GroupEntity group = groupRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        MessageCatalog.GRADE_NOT_FOUND.name()));
-        gradeDomain.validateRegistrationPeriod(grade, Instant.now(clock));
-
-        final GroupEntity group = grade.getGroup();
+                        MessageCatalog.GROUP_NOT_FOUND.name()));
         groupDomain.validateActive(group);
         groupDomain.validateAssignedTeacher(group, teacher.getId());
 
@@ -110,11 +109,21 @@ public class RegisterStudentGradeUseCase
                 .orElse(null);
         studentGroupDomain.validateEnrollment(studentGroup);
 
-        if (studentGradeRepository.existsByGradeIdAndStudentGroupId(
-                grade.getId(), studentGroup.getId())) {
-            throw new ConflictException(
-                    MessageCatalog.STUDENT_GRADE_ALREADY_REGISTERED.name());
+        final Instant now = Instant.now(clock);
+        final List<GradeEntity> openGrades = gradeRepository.findByGroupId(group.getId()).stream()
+                .filter(candidate -> gradeDomain.isOpenForRegistration(candidate, now))
+                .toList();
+        if (openGrades.isEmpty()) {
+            throw new BusinessRuleException(
+                    MessageCatalog.GRADE_OUTSIDE_REGISTRATION_PERIOD.name());
         }
+
+        final GradeEntity grade = openGrades.stream()
+                .filter(candidate -> !studentGradeRepository.existsByGradeIdAndStudentGroupId(
+                        candidate.getId(), studentGroup.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ConflictException(
+                        MessageCatalog.STUDENT_GRADE_ALREADY_REGISTERED.name()));
 
         final StudentGradeEntity studentGrade = new StudentGradeEntity();
         studentGrade.setId(UuidHelper.generate());

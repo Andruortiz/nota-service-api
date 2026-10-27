@@ -44,6 +44,13 @@ public class GradeRepositoryAdapter implements GradeRepository {
     }
 
     @Override
+    public List<GradeEntity> findByGroupId(final UUID groupId) {
+        return jpaRepository.findByGroupIdOrderByRegistrationDateFromAsc(groupId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<GradeEntity> findAll() {
         return jpaRepository.findAll().stream()
                 .map(mapper::toDomain)
