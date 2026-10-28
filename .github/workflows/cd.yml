@@ -158,17 +158,17 @@ jobs:
         run: |
           rsync -az -e "ssh -i ~/.ssh/id_deploy" \
             --exclude '.env' --exclude 'frontend/' --exclude 'vault-init.txt' \
-            deploy/ "$TARGET:/opt/grades/"
+            deploy/ "$TARGET:/opt/notas/"
 
       - name: Update services
         env:
           TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
           API_IMAGE: ${{ needs.image.outputs.reference }}
         run: |
-          ssh -i ~/.ssh/id_deploy "$TARGET" "cd /opt/grades \
+          ssh -i ~/.ssh/id_deploy "$TARGET" "cd /opt/notas \
             && export API_IMAGE='$API_IMAGE' \
             && docker compose -f docker-compose.prod.yml pull api \
-            && docker compose -f docker-compose.prod.yml up -d \
+            && docker compose -f docker-compose.prod.yml up -d"
             && docker compose -f docker-compose.prod.yml exec -T caddy caddy reload --config /etc/caddy/Caddyfile"
 
       - name: Smoke test
