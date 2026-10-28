@@ -67,6 +67,11 @@ public enum MessageCatalog {
             "Student already has a grade registered for this activity."
     ),
 
+    STUDENT_GRADE_NOT_FOUND(
+            "El estudiante no tiene una calificación de este tipo.",
+            "Student grade was not found for the grade type."
+    ),
+
     GRADE_VALUE_OUT_OF_RANGE(
             "La calificación debe estar entre 0.0 y 5.0.",
             "Grade value is outside allowed range."

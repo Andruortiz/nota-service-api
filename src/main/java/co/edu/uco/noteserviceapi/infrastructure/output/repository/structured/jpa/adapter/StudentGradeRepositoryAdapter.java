@@ -57,6 +57,11 @@ public class StudentGradeRepositoryAdapter implements StudentGradeRepository {
     }
 
     @Override
+    public Optional<StudentGradeEntity> findByStudentGroupIdAndType(final UUID studentGroupId, final GradeType type) {
+        return jpaRepository.findByStudentGroupIdAndType(studentGroupId, type).map(mapper::toDomain);
+    }
+
+    @Override
     public List<StudentGradeEntity> findByStudentGroupId(final UUID studentGroupId) {
         return jpaRepository.findByStudentGroupId(studentGroupId).stream()
                 .map(mapper::toDomain)

@@ -1,10 +1,11 @@
 package co.edu.uco.noteserviceapi.bootstrap;
 
-
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.*;
 import co.edu.uco.noteserviceapi.services.input.port.RegisterStudentGradePort;
 import co.edu.uco.noteserviceapi.services.output.port.repository.*;
 import co.edu.uco.noteserviceapi.services.usecase.RegisterStudentGradeUseCase;
+import co.edu.uco.noteserviceapi.services.usecase.StudentGradeContextResolver;
+import co.edu.uco.noteserviceapi.services.usecase.StudentGradeHistoryRecorder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,25 +33,42 @@ public class RegisterStudentGradeConfiguration {
     StudentGradeDomain studentGradeDomain() { return new StudentGradeDomain(); }
 
     @Bean
-    RegisterStudentGradePort registerStudentGradePort(
+    StudentGradeContextResolver studentGradeContextResolver(
             TeacherRepository teacherRepository,
-            StudentRepository studentRepository,
             GroupRepository groupRepository,
+            StudentRepository studentRepository,
             StudentGroupRepository studentGroupRepository,
             RegistrationPeriodRepository registrationPeriodRepository,
-            StudentGradeRepository studentGradeRepository,
             TeacherDomain teacherDomain,
-            StudentDomain studentDomain,
             GroupDomain groupDomain,
-            RegistrationPeriodDomain registrationPeriodDomain,
+            StudentDomain studentDomain,
             StudentGroupDomain studentGroupDomain,
-            StudentGradeDomain studentGradeDomain,
+            RegistrationPeriodDomain registrationPeriodDomain,
             Clock clock) {
 
+        return new StudentGradeContextResolver(
+                teacherRepository, groupRepository, studentRepository,
+                studentGroupRepository, registrationPeriodRepository,
+                teacherDomain, groupDomain, studentDomain,
+                studentGroupDomain, registrationPeriodDomain, clock);
+    }
+
+    @Bean
+    StudentGradeHistoryRecorder studentGradeHistoryRecorder(
+            StudentGradeHistoryRepository studentGradeHistoryRepository,
+            Clock clock) {
+
+        return new StudentGradeHistoryRecorder(studentGradeHistoryRepository, clock);
+    }
+
+    @Bean
+    RegisterStudentGradePort registerStudentGradePort(
+            StudentGradeContextResolver contextResolver,
+            StudentGradeRepository studentGradeRepository,
+            StudentGradeHistoryRecorder historyRecorder,
+            StudentGradeDomain studentGradeDomain) {
+
         return new RegisterStudentGradeUseCase(
-                teacherRepository, studentRepository, groupRepository,
-                studentGroupRepository, registrationPeriodRepository, studentGradeRepository,
-                teacherDomain, studentDomain, groupDomain,
-                registrationPeriodDomain, studentGroupDomain, studentGradeDomain, clock);
+                contextResolver, studentGradeRepository, historyRecorder, studentGradeDomain);
     }
 }

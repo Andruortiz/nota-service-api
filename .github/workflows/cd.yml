@@ -158,14 +158,14 @@ jobs:
         run: |
           rsync -az -e "ssh -i ~/.ssh/id_deploy" \
             --exclude '.env' --exclude 'frontend/' --exclude 'vault-init.txt' \
-            deploy/ "$TARGET:/opt/notas/"
+            deploy/ "$TARGET:/opt/grades/"
 
       - name: Update services
         env:
           TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
           API_IMAGE: ${{ needs.image.outputs.reference }}
         run: |
-          ssh -i ~/.ssh/id_deploy "$TARGET" "cd /opt/notas \
+          ssh -i ~/.ssh/id_deploy "$TARGET" "cd /opt/grades \
             && export API_IMAGE='$API_IMAGE' \
             && docker compose -f docker-compose.prod.yml pull api \
             && docker compose -f docker-compose.prod.yml up -d \
@@ -176,7 +176,7 @@ jobs:
           PUBLIC_HOST: ${{ vars.PUBLIC_HOST }}
         run: |
           for attempt in $(seq 1 18); do
-            STATUS="$(curl -s -o /dev/null -w '%{http_code}' "https://${PUBLIC_HOST}/api/v1/grupos" || true)"
+            STATUS="$(curl -s -o /dev/null -w '%{http_code}' "https://${PUBLIC_HOST}/api/v1/groups" || true)"
             if [ "$STATUS" = "401" ]; then
               echo "API responding (401 without token), as expected"
               exit 0

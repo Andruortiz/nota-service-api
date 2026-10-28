@@ -17,7 +17,7 @@ class RequestLoggingFilterTest {
     @Test
     @DisplayName("Should keep a valid incoming correlation id and clear it afterwards")
     void shouldKeepValidIncomingCorrelationIdAndClearItAfterwards() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/grupos");
+        final MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/groups");
         request.addHeader(RequestLoggingFilter.CORRELATION_HEADER, "abc12345-trace");
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final AtomicReference<String> insideChain = new AtomicReference<>();
@@ -33,7 +33,7 @@ class RequestLoggingFilterTest {
     @Test
     @DisplayName("Should generate a new correlation id when the incoming one is missing or unsafe")
     void shouldGenerateNewCorrelationIdWhenIncomingOneIsMissingOrUnsafe() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/grupos");
+        final MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/groups");
         request.addHeader(RequestLoggingFilter.CORRELATION_HEADER, "bad\nvalue");
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
