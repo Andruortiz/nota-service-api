@@ -35,9 +35,13 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(HttpMethod.POST, "/api/v1/notas-estudiante").hasRole(ROLE_TEACHER)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/grupos", "/api/v1/grupos/*/estudiantes",
-                                "/api/v1/grupos/*/estudiantes/*/notas", "/api/v1/periodos-registro")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/student-grades").hasRole(ROLE_TEACHER)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/groups", "/api/v1/groups/*/students",
+                                "/api/v1/groups/*/students/*/grades", "/api/v1/registration-periods")
+                        .hasRole(ROLE_TEACHER)
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/groups/*/students/*/grades/*")
+                        .hasRole(ROLE_TEACHER)
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/groups/*/students/*/grades/*")
                         .hasRole(ROLE_TEACHER)
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(server -> server.jwt(jwt -> jwt.jwtAuthenticationConverter(converter())))
