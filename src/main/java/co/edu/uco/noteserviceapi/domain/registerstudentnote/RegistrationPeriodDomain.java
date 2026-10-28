@@ -3,30 +3,29 @@ package co.edu.uco.noteserviceapi.domain.registerstudentnote;
 import co.edu.uco.noteserviceapi.crosscutting.exception.BusinessRuleException;
 import co.edu.uco.noteserviceapi.crosscutting.message.MessageCatalog;
 import co.edu.uco.noteserviceapi.crosscutting.util.helper.DateHelper;
-import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.GradeEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.RegistrationPeriodEntity;
 
 import java.time.Instant;
-public class GradeDomain {
 
-    public boolean isOpenForRegistration(
-            final GradeEntity grade,
+public class RegistrationPeriodDomain {
+
+    public boolean isOpen(
+            final RegistrationPeriodEntity period,
             final Instant currentTimestamp) {
 
         return DateHelper.isBetween(
                 currentTimestamp,
-                grade.getRegistrationDateFrom(),
-                grade.getRegistrationDateTo());
+                period.getRegistrationDateFrom(),
+                period.getRegistrationDateTo());
     }
 
-    public void validateRegistrationPeriod(
-            final GradeEntity grade,
+    public void validateOpen(
+            final RegistrationPeriodEntity period,
             final Instant currentTimestamp) {
 
-        if (!isOpenForRegistration(grade, currentTimestamp)) {
+        if (!isOpen(period, currentTimestamp)) {
             throw new BusinessRuleException(
                     MessageCatalog.GRADE_OUTSIDE_REGISTRATION_PERIOD.name());
         }
     }
-
-
 }

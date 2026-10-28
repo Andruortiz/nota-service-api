@@ -43,8 +43,13 @@ public enum MessageCatalog {
     ),
 
     GRADE_OUTSIDE_REGISTRATION_PERIOD(
-            "La actividad de evaluación no se encuentra disponible para registrar calificaciones.",
+            "El plazo para registrar este tipo de nota no se encuentra abierto.",
             "Current timestamp is outside registration period."
+    ),
+
+    REGISTRATION_PERIOD_NOT_FOUND(
+            "No hay un plazo de registro definido para este tipo de nota.",
+            "Registration period was not found for the grade type."
     ),
 
     STUDENT_GROUP_NOT_FOUND(
@@ -63,12 +68,12 @@ public enum MessageCatalog {
     ),
 
     GRADE_VALUE_OUT_OF_RANGE(
-            "La calificación debe estar entre 0.00 y 5.00.",
+            "La calificación debe estar entre 0.0 y 5.0.",
             "Grade value is outside allowed range."
     ),
 
     GRADE_INVALID_DECIMALS(
-            "La calificación tiene un formato inválido.",
+            "La calificación admite un solo decimal.",
             "Grade contains more decimal places than allowed."
     ),
 

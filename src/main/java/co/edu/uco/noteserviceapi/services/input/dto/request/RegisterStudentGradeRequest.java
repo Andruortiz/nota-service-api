@@ -1,5 +1,6 @@
 package co.edu.uco.noteserviceapi.services.input.dto.request;
 
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.GradeType;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
@@ -12,6 +13,8 @@ public class RegisterStudentGradeRequest {
     private UUID studentId;
     @NotNull
     private UUID groupId;
+    @NotNull
+    private GradeType type;
     private BigDecimal score;
 
     public UUID getTeacherId() {
@@ -36,6 +39,14 @@ public class RegisterStudentGradeRequest {
 
     public void setGroupId(final UUID groupId) {
         this.groupId = groupId;
+    }
+
+    public GradeType getType() {
+        return type;
+    }
+
+    public void setType(final GradeType type) {
+        this.type = type;
     }
 
     public BigDecimal getScore() {

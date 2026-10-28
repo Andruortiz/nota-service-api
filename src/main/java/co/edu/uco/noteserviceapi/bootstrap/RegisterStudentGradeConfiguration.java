@@ -23,7 +23,7 @@ public class RegisterStudentGradeConfiguration {
     GroupDomain groupDomain() { return new GroupDomain(); }
 
     @Bean
-    GradeDomain gradeDomain() { return new GradeDomain(); }
+    RegistrationPeriodDomain registrationPeriodDomain() { return new RegistrationPeriodDomain(); }
 
     @Bean
     StudentGroupDomain studentGroupDomain() { return new StudentGroupDomain(); }
@@ -37,20 +37,20 @@ public class RegisterStudentGradeConfiguration {
             StudentRepository studentRepository,
             GroupRepository groupRepository,
             StudentGroupRepository studentGroupRepository,
-            GradeRepository gradeRepository,
+            RegistrationPeriodRepository registrationPeriodRepository,
             StudentGradeRepository studentGradeRepository,
             TeacherDomain teacherDomain,
             StudentDomain studentDomain,
             GroupDomain groupDomain,
-            GradeDomain gradeDomain,
+            RegistrationPeriodDomain registrationPeriodDomain,
             StudentGroupDomain studentGroupDomain,
             StudentGradeDomain studentGradeDomain,
             Clock clock) {
 
         return new RegisterStudentGradeUseCase(
                 teacherRepository, studentRepository, groupRepository,
-                studentGroupRepository, gradeRepository, studentGradeRepository,
+                studentGroupRepository, registrationPeriodRepository, studentGradeRepository,
                 teacherDomain, studentDomain, groupDomain,
-                gradeDomain, studentGroupDomain, studentGradeDomain, clock);
+                registrationPeriodDomain, studentGroupDomain, studentGradeDomain, clock);
     }
 }

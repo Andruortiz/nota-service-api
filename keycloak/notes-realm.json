@@ -1,8 +1,13 @@
 {
   "realm": "notes",
+  "displayName": "Sistema de Registro de Notas",
   "enabled": true,
   "sslRequired": "none",
   "registrationAllowed": false,
+  "loginTheme": "notas",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["es"],
+  "defaultLocale": "es",
   "roles": {
     "realm": [
       { "name": "DOCENTE" },

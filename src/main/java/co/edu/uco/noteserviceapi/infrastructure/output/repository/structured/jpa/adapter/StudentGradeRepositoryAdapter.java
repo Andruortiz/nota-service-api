@@ -1,5 +1,6 @@
 package co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa.adapter;
 
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.GradeType;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentGradeEntity;
 import co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa.mapper.StudentGradeEntityMapper;
 import co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa.repository.StudentGradeJpaRepository;
@@ -51,8 +52,8 @@ public class StudentGradeRepositoryAdapter implements StudentGradeRepository {
     }
 
     @Override
-    public boolean existsByGradeIdAndStudentGroupId(final UUID gradeId, final UUID studentGroupId) {
-        return jpaRepository.existsByGradeIdAndStudentGroupId(gradeId, studentGroupId);
+    public boolean existsByStudentGroupIdAndType(final UUID studentGroupId, final GradeType type) {
+        return jpaRepository.existsByStudentGroupIdAndType(studentGroupId, type);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package co.edu.uco.noteserviceapi.domain.registerstudentnote.entity;
 
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.GradeType;
+
 import java.util.UUID;
 
 public class StudentGradeEntity{
 
     private UUID id;
-    private GradeEntity grade;
+    private GradeType type;
     private StudentGroupEntity studentGroup;
     private int value;
 
@@ -34,11 +36,11 @@ public class StudentGradeEntity{
         this.studentGroup = studentGroup;
     }
 
-    public GradeEntity getGrade() {
-        return grade;
+    public GradeType getType() {
+        return type;
     }
 
-    public void setGrade(GradeEntity grade) {
-        this.grade = grade;
+    public void setType(GradeType type) {
+        this.type = type;
     }
 }
