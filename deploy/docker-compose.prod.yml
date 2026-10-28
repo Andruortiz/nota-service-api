@@ -1,7 +1,14 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   caddy:
     image: caddy:2
     restart: unless-stopped
+    logging: *default-logging
     environment:
       PUBLIC_HOST: ${PUBLIC_HOST:?defina PUBLIC_HOST en .env}
     ports:
@@ -19,6 +26,7 @@ services:
   api:
     image: ${API_IMAGE:-ghcr.io/andruortiz/nota-service-api:latest}
     restart: unless-stopped
+    logging: *default-logging
     mem_limit: 640m
     environment:
       SPRING_PROFILES_ACTIVE: vault,prod
@@ -42,6 +50,7 @@ services:
   postgres:
     image: postgres:17
     restart: unless-stopped
+    logging: *default-logging
     environment:
       POSTGRES_DB: ${BD_NOMBRE:-notes}
       POSTGRES_USER: ${BD_USUARIO:?defina BD_USUARIO en .env}
@@ -58,6 +67,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.0
     restart: unless-stopped
+    logging: *default-logging
     mem_limit: 1g
     command: start --import-realm
     environment:
@@ -74,6 +84,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_CLAVE:?defina KEYCLOAK_ADMIN_CLAVE en .env}
     volumes:
       - ./keycloak:/opt/keycloak/data/import:ro
+      - ./keycloak-theme:/opt/keycloak/themes:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -81,6 +92,7 @@ services:
   vault:
     image: hashicorp/vault:1.18
     restart: unless-stopped
+    logging: *default-logging
     command: server
     environment:
       SKIP_SETCAP: "true"

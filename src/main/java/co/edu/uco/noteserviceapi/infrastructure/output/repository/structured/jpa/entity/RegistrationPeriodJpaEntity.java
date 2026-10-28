@@ -1,20 +1,18 @@
 package co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa.entity;
 
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.GradeType;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
-@Table(name = "grade")
-public class GradeJpaEntity {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    private UUID id;
+@Table(name = "registration_period")
+public class RegistrationPeriodJpaEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "group_id", nullable = false)
-    private GroupJpaEntity group;
+    @Id
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, updatable = false, length = 20)
+    private GradeType type;
 
     @Column(name = "registration_date_from", nullable = false)
     private Instant registrationDateFrom;
@@ -22,20 +20,12 @@ public class GradeJpaEntity {
     @Column(name = "registration_date_to", nullable = false)
     private Instant registrationDateTo;
 
-    public UUID getId() {
-        return id;
+    public GradeType getType() {
+        return type;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public GroupJpaEntity getGroup() {
-        return group;
-    }
-
-    public void setGroup(GroupJpaEntity group) {
-        this.group = group;
+    public void setType(GradeType type) {
+        this.type = type;
     }
 
     public Instant getRegistrationDateFrom() {

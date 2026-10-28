@@ -1,20 +1,20 @@
 package co.edu.uco.noteserviceapi.domain.registerstudentnote.entity;
 
-import java.time.Instant;
-import java.util.UUID;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.GradeType;
 
-public class GradeEntity {
-    UUID id;
-    GroupEntity group;
+import java.time.Instant;
+
+public class RegistrationPeriodEntity {
+    GradeType type;
     Instant registrationDateFrom;
     Instant registrationDateTo;
 
-    public GroupEntity getGroup() {
-        return group;
+    public GradeType getType() {
+        return type;
     }
 
-    public void setGroup(GroupEntity group) {
-        this.group = group;
+    public void setType(GradeType type) {
+        this.type = type;
     }
 
     public Instant getRegistrationDateFrom() {
@@ -31,13 +31,5 @@ public class GradeEntity {
 
     public void setRegistrationDateTo(Instant registrationDateTo) {
         this.registrationDateTo = registrationDateTo;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 }

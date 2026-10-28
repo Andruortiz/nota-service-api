@@ -13,7 +13,7 @@ public class StudentGradeDomain {
     private static final BigDecimal MAX_GRADE =
             BigDecimal.valueOf(5);
 
-    private static final int MAX_DECIMALS = 2;
+    private static final int MAX_DECIMALS = 1;
 
     public int validateAndConvert(
             final BigDecimal grade) {

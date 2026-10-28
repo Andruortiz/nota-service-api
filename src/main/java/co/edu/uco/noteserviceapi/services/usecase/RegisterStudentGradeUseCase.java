@@ -2,28 +2,28 @@ package co.edu.uco.noteserviceapi.services.usecase;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.List;
 
-import co.edu.uco.noteserviceapi.crosscutting.exception.BusinessRuleException;
 import co.edu.uco.noteserviceapi.crosscutting.exception.ConflictException;
 import co.edu.uco.noteserviceapi.crosscutting.exception.ResourceNotFoundException;
 import co.edu.uco.noteserviceapi.crosscutting.message.MessageCatalog;
 import co.edu.uco.noteserviceapi.crosscutting.util.helper.UuidHelper;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.*;
-import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.GradeEntity;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.GroupEntity;
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.RegistrationPeriodEntity;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentEntity;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentGradeEntity;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.StudentGroupEntity;
 import co.edu.uco.noteserviceapi.domain.registerstudentnote.entity.TeacherEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.uco.noteserviceapi.services.input.dto.request.RegisterStudentGradeRequest;
 import co.edu.uco.noteserviceapi.services.input.dto.response.RegisterStudentGradeResponse;
 import co.edu.uco.noteserviceapi.services.input.port.RegisterStudentGradePort;
-import co.edu.uco.noteserviceapi.services.output.port.repository.GradeRepository;
 import co.edu.uco.noteserviceapi.services.output.port.repository.GroupRepository;
+import co.edu.uco.noteserviceapi.services.output.port.repository.RegistrationPeriodRepository;
 import co.edu.uco.noteserviceapi.services.output.port.repository.StudentGradeRepository;
 import co.edu.uco.noteserviceapi.services.output.port.repository.StudentGroupRepository;
 import co.edu.uco.noteserviceapi.services.output.port.repository.StudentRepository;
@@ -34,17 +34,19 @@ import co.edu.uco.noteserviceapi.services.output.port.repository.TeacherReposito
 public class RegisterStudentGradeUseCase
         implements RegisterStudentGradePort {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterStudentGradeUseCase.class);
+
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
     private final StudentGroupRepository studentGroupRepository;
-    private final GradeRepository gradeRepository;
+    private final RegistrationPeriodRepository registrationPeriodRepository;
     private final StudentGradeRepository studentGradeRepository;
 
     private final TeacherDomain teacherDomain;
     private final StudentDomain studentDomain;
     private final GroupDomain groupDomain;
-    private final GradeDomain gradeDomain;
+    private final RegistrationPeriodDomain registrationPeriodDomain;
     private final StudentGroupDomain studentGroupDomain;
     private final StudentGradeDomain studentGradeDomain;
 
@@ -55,12 +57,12 @@ public class RegisterStudentGradeUseCase
             final StudentRepository studentRepository,
             final GroupRepository groupRepository,
             final StudentGroupRepository studentGroupRepository,
-            final GradeRepository gradeRepository,
+            final RegistrationPeriodRepository registrationPeriodRepository,
             final StudentGradeRepository studentGradeRepository,
             final TeacherDomain teacherDomain,
             final StudentDomain studentDomain,
             final GroupDomain groupDomain,
-            final GradeDomain gradeDomain,
+            final RegistrationPeriodDomain registrationPeriodDomain,
             final StudentGroupDomain studentGroupDomain,
             final StudentGradeDomain studentGradeDomain,
             final Clock clock) {
@@ -69,13 +71,13 @@ public class RegisterStudentGradeUseCase
         this.studentRepository = studentRepository;
         this.groupRepository = groupRepository;
         this.studentGroupRepository = studentGroupRepository;
-        this.gradeRepository = gradeRepository;
+        this.registrationPeriodRepository = registrationPeriodRepository;
         this.studentGradeRepository = studentGradeRepository;
 
         this.teacherDomain = teacherDomain;
         this.studentDomain = studentDomain;
         this.groupDomain = groupDomain;
-        this.gradeDomain = gradeDomain;
+        this.registrationPeriodDomain = registrationPeriodDomain;
         this.studentGroupDomain = studentGroupDomain;
         this.studentGradeDomain = studentGradeDomain;
 
@@ -109,29 +111,27 @@ public class RegisterStudentGradeUseCase
                 .orElse(null);
         studentGroupDomain.validateEnrollment(studentGroup);
 
-        final Instant now = Instant.now(clock);
-        final List<GradeEntity> openGrades = gradeRepository.findByGroupId(group.getId()).stream()
-                .filter(candidate -> gradeDomain.isOpenForRegistration(candidate, now))
-                .toList();
-        if (openGrades.isEmpty()) {
-            throw new BusinessRuleException(
-                    MessageCatalog.GRADE_OUTSIDE_REGISTRATION_PERIOD.name());
-        }
+        final GradeType type = request.getType();
+        final RegistrationPeriodEntity period = registrationPeriodRepository.findById(type)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageCatalog.REGISTRATION_PERIOD_NOT_FOUND.name()));
+        registrationPeriodDomain.validateOpen(period, Instant.now(clock));
 
-        final GradeEntity grade = openGrades.stream()
-                .filter(candidate -> !studentGradeRepository.existsByGradeIdAndStudentGroupId(
-                        candidate.getId(), studentGroup.getId()))
-                .findFirst()
-                .orElseThrow(() -> new ConflictException(
-                        MessageCatalog.STUDENT_GRADE_ALREADY_REGISTERED.name()));
+        if (studentGradeRepository.existsByStudentGroupIdAndType(studentGroup.getId(), type)) {
+            throw new ConflictException(
+                    MessageCatalog.STUDENT_GRADE_ALREADY_REGISTERED.name());
+        }
 
         final StudentGradeEntity studentGrade = new StudentGradeEntity();
         studentGrade.setId(UuidHelper.generate());
-        studentGrade.setGrade(grade);
+        studentGrade.setType(type);
         studentGrade.setStudentGroup(studentGroup);
         studentGrade.setValue(value);
 
         studentGradeRepository.create(studentGrade);
+
+        LOGGER.info("Student grade registered: id={}, type={}, group={}, student={}, teacher={}",
+                studentGrade.getId(), type, group.getId(), student.getId(), teacher.getId());
 
         return new RegisterStudentGradeResponse(studentGrade.getId());
     }

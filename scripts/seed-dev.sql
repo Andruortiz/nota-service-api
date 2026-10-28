@@ -11,10 +11,10 @@ INSERT INTO class_group (id, name, teacher_id, active)
 VALUES ('019a0000-0000-7000-8000-000000000002', 'Grupo A', '019a0000-0000-7000-8000-000000000001', true)
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO grade (id, group_id, registration_date_from, registration_date_to)
-VALUES ('019a0000-0000-7000-8000-000000000005', '019a0000-0000-7000-8000-000000000002',
-        now() - interval '1 day', now() + interval '365 days')
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO registration_period (type, registration_date_from, registration_date_to)
+VALUES ('FOLLOW_UP', now() - interval '1 day', now() + interval '365 days'),
+       ('MIDTERM', now() - interval '1 day', now() + interval '365 days')
+ON CONFLICT (type) DO NOTHING;
 
 INSERT INTO student_group (id, student_id, group_id, active)
 VALUES ('019a0000-0000-7000-8000-000000000006', '019a0000-0000-7000-8000-000000000003', '019a0000-0000-7000-8000-000000000002', true),

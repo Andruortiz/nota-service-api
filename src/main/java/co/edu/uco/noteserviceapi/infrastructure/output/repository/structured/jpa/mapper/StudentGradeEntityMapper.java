@@ -5,7 +5,7 @@ import co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring",
-        uses = {GradeEntityMapper.class, StudentGroupEntityMapper.class})
+        uses = {StudentGroupEntityMapper.class})
 public interface StudentGradeEntityMapper {
 
     StudentGradeJpaEntity toJpa(StudentGradeEntity entity);

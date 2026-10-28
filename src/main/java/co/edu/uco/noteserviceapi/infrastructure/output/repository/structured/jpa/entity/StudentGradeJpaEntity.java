@@ -1,21 +1,23 @@
 package co.edu.uco.noteserviceapi.infrastructure.output.repository.structured.jpa.entity;
 
+import co.edu.uco.noteserviceapi.domain.registerstudentnote.GradeType;
 import jakarta.persistence.*;
-
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "student_grade",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"grade_id", "student_group_id"}))
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_student_grade_student_group_type",
+                columnNames = {"student_group_id", "type"}))
 public class StudentGradeJpaEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "grade_id", nullable = false)
-    private GradeJpaEntity grade;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 20)
+    private GradeType type;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "student_group_id", nullable = false)
@@ -40,12 +42,12 @@ public class StudentGradeJpaEntity {
         this.studentGroup = studentGroup;
     }
 
-    public GradeJpaEntity getGrade() {
-        return grade;
+    public GradeType getType() {
+        return type;
     }
 
-    public void setGrade(GradeJpaEntity grade) {
-        this.grade = grade;
+    public void setType(GradeType type) {
+        this.type = type;
     }
 
     public UUID getId() {

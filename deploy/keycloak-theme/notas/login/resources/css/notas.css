@@ -1,0 +1,125 @@
+:root {
+  --pf-v5-global--primary-color--100: #1f3a5f;
+  --pf-v5-global--primary-color--200: #162b47;
+  --pf-v5-global--active-color--100: #1f3a5f;
+  --pf-v5-global--link--Color: #1f3a5f;
+  --pf-v5-global--link--Color--hover: #162b47;
+  --pf-v5-global--BorderRadius--sm: 0;
+  --pf-v5-global--BorderRadius--lg: 0;
+  --pf-v5-global--FontFamily--text: Georgia, 'Times New Roman', serif;
+  --pf-v5-global--FontFamily--heading: Georgia, 'Times New Roman', serif;
+  --pf-v5-c-form-control--BorderRadius: 0;
+  --pf-v5-c-form-control--BorderColor: #7d7b72;
+}
+
+html.login-pf,
+.login-pf body,
+body#keycloak-bg {
+  background: #f6f5f1 !important;
+  border-top: 4px solid #a8873c;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #1d1d1b;
+}
+
+.pf-v5-c-login {
+  background: transparent;
+}
+
+#kc-header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #1f3a5f;
+}
+
+#kc-header-wrapper::before {
+  content: 'SR';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #162b47;
+  border: 1px solid #a8873c;
+  color: #e9d9ae;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+.pf-v5-c-login__main {
+  background: #fff;
+  border: 1px solid #c9c7be;
+  border-top: 4px solid #1f3a5f;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#kc-page-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 26px;
+  font-weight: normal;
+  color: #1d1d1b;
+}
+
+.pf-v5-c-form__label-text {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: #5b5b55;
+}
+
+.pf-v5-c-form-control,
+.pf-v5-c-form-control input {
+  border-radius: 0;
+}
+
+.pf-v5-c-form-control input {
+  background: #fff;
+  font-family: inherit;
+}
+
+.pf-v5-c-button {
+  border-radius: 0;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.pf-v5-c-button.pf-m-primary {
+  background: #1f3a5f;
+  color: #fff;
+}
+
+.pf-v5-c-button.pf-m-primary:hover,
+.pf-v5-c-button.pf-m-primary:focus {
+  background: #162b47;
+}
+
+.pf-v5-c-login__header,
+#kc-header-wrapper {
+  color: #1f3a5f !important;
+}
+
+.pf-v5-c-check__label {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: #43423e !important;
+}
+
+.pf-v5-c-button.pf-m-control {
+  background: #fff;
+  border: 1px solid #7d7b72;
+  color: #1f3a5f;
+}
+
+.pf-v5-c-alert,
+.pf-v5-c-login__main-footer-band {
+  border-radius: 0;
+}
+
+a {
+  color: #1f3a5f;
+}

@@ -26,6 +26,7 @@ services:
     volumes:
       - keycloak-data:/opt/keycloak/data
       - ./keycloak:/opt/keycloak/data/import:ro
+      - ./deploy/keycloak-theme:/opt/keycloak/themes:ro
 
   vault:
     image: hashicorp/vault:1.18

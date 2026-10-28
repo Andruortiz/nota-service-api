@@ -2,9 +2,9 @@ package co.edu.uco.noteserviceapi.crosscutting.parameter;
 
 public enum ParameterCatalog {
 
-    MIN_GRADE_VALUE("0.00"),
-    MAX_GRADE_VALUE("5.00"),
-    MAX_GRADE_DECIMALS("2"),
+    MIN_GRADE_VALUE("0.0"),
+    MAX_GRADE_VALUE("5.0"),
+    MAX_GRADE_DECIMALS("1"),
 
     DEFAULT_PAGE_SIZE("20"),
     MAX_PAGE_SIZE("100"),

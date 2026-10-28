@@ -53,7 +53,7 @@ public class ListStudentGradesUseCase implements ListStudentGradesPort {
         return studentGradeRepository.findByStudentGroupId(studentGroup.getId()).stream()
                 .map(studentGrade -> new StudentGradeResponse(
                         studentGrade.getId(),
-                        studentGrade.getGrade().getId(),
+                        studentGrade.getType(),
                         BigDecimal.valueOf(studentGrade.getValue(), 2)))
                 .toList();
     }

@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.POST, "/api/v1/notas-estudiante").hasRole(ROLE_TEACHER)
                         .requestMatchers(HttpMethod.GET, "/api/v1/grupos", "/api/v1/grupos/*/estudiantes",
-                                "/api/v1/grupos/*/estudiantes/*/notas")
+                                "/api/v1/grupos/*/estudiantes/*/notas", "/api/v1/periodos-registro")
                         .hasRole(ROLE_TEACHER)
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(server -> server.jwt(jwt -> jwt.jwtAuthenticationConverter(converter())))
