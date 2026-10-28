@@ -148,7 +148,7 @@ jobs:
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
@@ -168,7 +168,7 @@ jobs:
           ssh -i ~/.ssh/id_deploy "$TARGET" "cd /opt/notas \
             && export API_IMAGE='$API_IMAGE' \
             && docker compose -f docker-compose.prod.yml pull api \
-            && docker compose -f docker-compose.prod.yml up -d"
+            && docker compose -f docker-compose.prod.yml up -d \
             && docker compose -f docker-compose.prod.yml exec -T caddy caddy reload --config /etc/caddy/Caddyfile"
 
       - name: Smoke test
